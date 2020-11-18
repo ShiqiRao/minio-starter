@@ -1,9 +1,6 @@
 package com.example.minio;
 
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.RemoveBucketArgs;
+import io.minio.*;
 import io.minio.errors.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,10 +43,31 @@ public class TestCases {
             NoSuchAlgorithmException, ServerException, InternalException, XmlParserException, ErrorResponseException {
         boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket("my-bucketname").build());
         if (found) {
-            minioClient.removeBucket(RemoveBucketArgs.builder().bucket("my-bucketname").build());
+            minioClient.removeBucket(RemoveBucketArgs.builder().bucket("my-bucketname-in-eu").build());
             System.out.println("my-bucketname is removed successfully");
         } else {
             System.out.println("my-bucketname does not exist");
         }
+    }
+
+    @Test
+    void testUploadObject() throws IOException, ServerException, InsufficientDataException, InternalException,
+            InvalidResponseException, InvalidKeyException, NoSuchAlgorithmException, XmlParserException, ErrorResponseException {
+        minioClient.uploadObject(
+                UploadObjectArgs.builder()
+                        .bucket("my-bucketname")
+                        .object("my-filename")
+                        .filename("my-filename")
+                        .build());
+    }
+
+    @Test
+    void testRemoveObject() throws IOException, InvalidKeyException, InvalidResponseException, InsufficientDataException,
+            NoSuchAlgorithmException, ServerException, InternalException, XmlParserException, ErrorResponseException {
+        minioClient.removeObject(
+                RemoveObjectArgs.builder()
+                        .bucket("my-bucketname")
+                        .object("my-filename")
+                        .build());
     }
 }
