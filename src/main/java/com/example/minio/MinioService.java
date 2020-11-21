@@ -8,6 +8,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
+
 @Service
 public class MinioService implements ApplicationRunner {
 
@@ -39,12 +41,12 @@ public class MinioService implements ApplicationRunner {
         }
     }
 
-    public void uploadObject(String objectName, String fileName) throws Exception {
-        minioClient.uploadObject(
-                UploadObjectArgs.builder()
+    public void uploadObject(String objectName, InputStream inputStream) throws Exception {
+        minioClient.putObject(
+                PutObjectArgs.builder()
                         .bucket(minioConfigurationProperties.getBucket())
                         .object(objectName)
-                        .filename(fileName)
+                        .stream(inputStream, inputStream.available(), -1)
                         .build());
     }
 
