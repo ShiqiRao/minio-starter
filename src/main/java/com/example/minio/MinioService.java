@@ -1,6 +1,7 @@
 package com.example.minio;
 
 import io.minio.*;
+import io.minio.errors.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 @Service
 public class MinioService implements ApplicationRunner {
@@ -41,8 +45,8 @@ public class MinioService implements ApplicationRunner {
         }
     }
 
-    public void uploadObject(String objectName, InputStream inputStream) throws Exception {
-        minioClient.putObject(
+    public ObjectWriteResponse uploadObject(String objectName, InputStream inputStream) throws Exception {
+        return minioClient.putObject(
                 PutObjectArgs.builder()
                         .bucket(minioConfigurationProperties.getBucket())
                         .object(objectName)
@@ -56,5 +60,15 @@ public class MinioService implements ApplicationRunner {
                         .bucket(minioConfigurationProperties.getBucket())
                         .object(objectName)
                         .build());
+    }
+
+    public InputStream getObject(String objectName) throws IOException, InvalidKeyException, InvalidResponseException,
+            InsufficientDataException, NoSuchAlgorithmException, ServerException, InternalException, XmlParserException, ErrorResponseException {
+        return minioClient.getObject(
+                GetObjectArgs.builder()
+                        .bucket(minioConfigurationProperties.getBucket())
+                        .object(objectName)
+                        .build());
+
     }
 }
