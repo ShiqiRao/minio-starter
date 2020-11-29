@@ -36,16 +36,24 @@ public class MinioService implements ApplicationRunner {
     }
 
     public void removeBucket() throws Exception {
-        boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(minioConfigurationProperties.getBucket()).build());
+        //移除存储桶
+        boolean found = minioClient.bucketExists(BucketExistsArgs
+                .builder()
+                .bucket(minioConfigurationProperties.getBucket())
+                .build());
         if (found) {
-            minioClient.removeBucket(RemoveBucketArgs.builder().bucket(minioConfigurationProperties.getBucket()).build());
+            minioClient.removeBucket(RemoveBucketArgs
+                    .builder()
+                    .bucket(minioConfigurationProperties.getBucket())
+                    .build());
             LOGGER.info("{} removed successfully", minioConfigurationProperties.getBucket());
         } else {
-            LOGGER.info("my-bucketname does not exist");
+            LOGGER.info("{} does not exist", minioConfigurationProperties.getBucket());
         }
     }
 
     public ObjectWriteResponse uploadObject(String objectName, InputStream inputStream) throws Exception {
+        //以输入流形式上传文件
         return minioClient.putObject(
                 PutObjectArgs.builder()
                         .bucket(minioConfigurationProperties.getBucket())
@@ -55,6 +63,7 @@ public class MinioService implements ApplicationRunner {
     }
 
     public void removeObject(String objectName) throws Exception {
+        //移除对象（文件）
         minioClient.removeObject(
                 RemoveObjectArgs.builder()
                         .bucket(minioConfigurationProperties.getBucket())
@@ -64,11 +73,15 @@ public class MinioService implements ApplicationRunner {
 
     public InputStream getObject(String objectName) throws IOException, InvalidKeyException, InvalidResponseException,
             InsufficientDataException, NoSuchAlgorithmException, ServerException, InternalException, XmlParserException, ErrorResponseException {
+        //获取文件，下载文件
+        minioClient.statObject(StatObjectArgs.builder()
+                .bucket(minioConfigurationProperties.getBucket())
+                .object(objectName)
+                .build());
         return minioClient.getObject(
                 GetObjectArgs.builder()
                         .bucket(minioConfigurationProperties.getBucket())
                         .object(objectName)
                         .build());
-
     }
 }

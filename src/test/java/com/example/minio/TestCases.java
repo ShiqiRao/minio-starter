@@ -70,4 +70,13 @@ public class TestCases {
                         .object("my-filename")
                         .build());
     }
+
+    @Test
+    void testGetObject() throws IOException, InvalidKeyException, InvalidResponseException, InsufficientDataException,
+            NoSuchAlgorithmException, ServerException, InternalException, XmlParserException, ErrorResponseException {
+        minioClient.statObject(StatObjectArgs.builder()
+                .bucket("my-bucketname")
+                .object("objectName")
+                .build());
+    }
 }
